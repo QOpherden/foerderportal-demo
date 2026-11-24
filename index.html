@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Förderportal Vorläuferfähigkeiten</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Zum Inhalt springen</a>
+
+  <header class="kopf">
+    <div class="kopf-text">
+      <p class="eyebrow" id="eyebrow">Lernausgangslage Jahrgangsstufe 1</p>
+      <h1 id="frage">Mit welchen Vorläuferfähigkeiten starten unsere Erstklässler*innen?</h1>
+    </div>
+    <div class="kopf-meta" id="kopf-meta"></div>
+  </header>
+
+  <nav class="auswahl" aria-label="Auswahl Stufe und Klasse">
+    <div class="auswahl-zeile">
+      <span class="auswahl-label" id="stufen-label">Stufe:</span>
+      <div class="stufen-knoepfe" role="group" aria-labelledby="stufen-label" id="stufen"></div>
+    </div>
+    <div class="auswahl-zeile">
+      <span class="auswahl-label" id="auswahl-label">Auswahl:</span>
+      <div class="auswahl-knoepfe" role="group" aria-labelledby="auswahl-label" id="auswahl"></div>
+    </div>
+  </nav>
+
+  <main id="main" class="layout">
+    <section class="kacheln" aria-label="Kennzahlen" id="kacheln" aria-live="polite"></section>
+
+    <section class="karte karte-bereiche" aria-labelledby="h-bereiche">
+      <h2 id="h-bereiche">Wie sicher sind die einzelnen Bereiche?</h2>
+      <p class="unterzeile" id="sub-bereiche"></p>
+      <div id="bereiche"></div>
+      <p class="legende">
+        <span><i class="sw sw-ok"></i>gesichert (Anteil)</span>
+        <span><i class="sw sw-offen"></i>nicht gesichert (Anzahl Kinder)</span>
+      </p>
+      <p class="hinweis">Klick auf einen Bereich: alle Materialien dazu</p>
+    </section>
+
+    <section class="karte karte-vergleich" aria-labelledby="h-vergleich">
+      <h2 id="h-vergleich">Klassenvergleich</h2>
+      <p class="unterzeile">Anteil „gesichert“ je Klasse und Bereich – je dunkler, desto höher</p>
+      <div id="vergleich"></div>
+      <div class="skala" aria-hidden="true"><span>40 %</span><i></i><span>100 %</span></div>
+      <p class="hinweis">Klick auf einen Spaltenkopf: alle Materialien zu diesem Bereich</p>
+    </section>
+
+    <aside class="massnahmen" aria-labelledby="h-massnahmen" id="massnahmen-box">
+      <h2 id="h-massnahmen">Maßnahmen</h2>
+      <p class="unterzeile" id="sub-massnahmen"></p>
+      <button type="button" class="pdf-knopf" id="pdf-knopf" hidden>
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M12 12v6M9 15l3 3 3-3"/></svg>
+        <span id="pdf-knopf-text">Förderempfehlungen als PDF</span>
+      </button>
+      <div id="massnahmen"></div>
+    </aside>
+
+    <section class="karte karte-bedarf" aria-labelledby="h-bedarf">
+      <h2 id="h-bedarf">Förderbedarf je Klasse</h2>
+      <p class="unterzeile">Anzahl Kinder nach Zahl der noch offenen Bereiche</p>
+      <div id="bedarf"></div>
+      <p class="legende" id="legende-bedarf"></p>
+    </section>
+
+    <section class="karte karte-profile" aria-labelledby="h-profile">
+      <h2 id="h-profile">Förderprofile der Kinder mit Förderbedarf</h2>
+      <p class="unterzeile">Welche Bereiche fehlen gemeinsam?
+        <span class="dot-inline dot-offen"></span> nicht gesichert ·
+        <span class="dot-inline"></span> gesichert</p>
+      <div id="profile"></div>
+      <p class="hinweis">Klick auf ein Profil: Materialien für alle Bereiche dieses Profils</p>
+    </section>
+  </main>
+
+  <footer class="fuss" id="fuss"></footer>
+
+  <div class="overlay" id="overlay" hidden></div>
+  <div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panel-titel" hidden>
+    <div class="panel-kopf">
+      <div>
+        <p class="panel-eyebrow">Materialliste</p>
+        <h2 id="panel-titel"></h2>
+        <p class="panel-anzahl" id="panel-anzahl" aria-live="polite"></p>
+      </div>
+      <button type="button" class="schliessen" id="panel-zu" aria-label="Materialliste schließen" title="Schließen (Esc)">×</button>
+    </div>
+    <div class="panel-filter">
+      <label class="check"><input type="checkbox" id="f-vorhanden"> nur vorhandenes Material <span class="leise">(ohne Spiel- und Buch-Anschaffungen)</span></label>
+      <label class="suche"><span class="sr">Suche in der Materialliste</span>
+        <input type="search" id="f-suche" placeholder="Suchen, z. B. Reime, Knete, Würfel …" autocomplete="off"></label>
+    </div>
+    <div class="panel-inhalt" id="panel-inhalt"></div>
+  </div>
+
+  <!-- Druckansicht „Förderempfehlungen“ (nur beim Drucken/PDF sichtbar) -->
+  <div class="druck" id="druck" aria-hidden="true"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

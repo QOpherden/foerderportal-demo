@@ -1,0 +1,491 @@
+/* Förderportal – Gestaltung nach GS01-Übersicht */
+:root {
+  --grund: #eef3fa;
+  --karte: #ffffff;
+  --text: #0d2b52;
+  --leise: #5d7393;
+  --linie: #dbe5f2;
+  --ok: #2a78d6;
+  --offen: #f08a55;
+  --o1: #f08a55;
+  --o2: #d4561f;
+  --o3: #97380c;
+  --navy: #0d2b52;
+  --fokus: #ffb000;
+  --radius: 14px;
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+  color: var(--text);
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--grund);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.4;
+  padding: 28px 32px 24px;
+}
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+
+/* Fokus immer deutlich sichtbar */
+:focus-visible {
+  outline: 3px solid var(--fokus);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.sr {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.skip {
+  position: absolute; left: 12px; top: -60px; background: var(--navy); color: #fff;
+  padding: 8px 14px; border-radius: 8px; z-index: 100; text-decoration: none;
+}
+.skip:focus { top: 12px; }
+
+/* ---------- Kopf ---------- */
+.kopf {
+  display: flex; justify-content: space-between; align-items: flex-end; gap: 24px;
+  max-width: 1840px; margin: 0 auto;
+}
+.eyebrow {
+  margin: 0 0 6px; color: var(--ok); font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; font-size: 13px;
+}
+h1 { margin: 0; font-size: clamp(24px, 2.5vw, 38px); line-height: 1.15; letter-spacing: -.01em; }
+.kopf-meta { text-align: right; color: var(--leise); font-size: 14px; white-space: nowrap; }
+.kopf-meta strong { color: var(--text); display: block; font-size: 15px; }
+
+/* ---------- Auswahlleiste ---------- */
+.auswahl {
+  max-width: 1840px; margin: 18px auto 18px; display: flex; flex-direction: column; gap: 10px;
+}
+.auswahl-zeile { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.auswahl-label { font-weight: 600; color: var(--leise); font-size: 14px; min-width: 62px; }
+
+/* Stufen: Segment-Leiste */
+.stufen-knoepfe {
+  display: inline-flex; flex-wrap: wrap; background: #fff; border: 1.5px solid #b9cde8; border-radius: 10px; padding: 3px; gap: 2px;
+}
+.stufen-knoepfe button {
+  border: 0; background: none; border-radius: 7px; padding: 6px 16px; font-weight: 600; font-size: 14px;
+}
+.stufen-knoepfe button:hover:not(:disabled) { background: #eef3fa; }
+.stufen-knoepfe button[aria-pressed="true"] { background: var(--navy); color: #fff; }
+.stufen-knoepfe button:disabled { color: #9aabc2; cursor: not-allowed; }
+/* Stufe ohne Schuldaten, aber mit Material */
+.stufe-zusatz {
+  display: inline-block; margin-left: 6px; font-size: 10.5px; font-weight: 600; padding: 0 5px;
+  border: 1px dashed currentColor; border-radius: 4px; line-height: 1.5; opacity: .8; vertical-align: 1px;
+}
+.auswahl-knoepfe { display: flex; flex-wrap: wrap; gap: 6px; }
+.auswahl-knoepfe button {
+  border: 1.5px solid #b9cde8; background: #fff; border-radius: 999px;
+  padding: 6px 16px; font-weight: 600; font-size: 14px; min-width: 64px;
+}
+.auswahl-knoepfe button:hover { border-color: var(--ok); }
+.auswahl-knoepfe button[aria-pressed="true"] {
+  background: var(--ok); border-color: var(--ok); color: #fff;
+}
+
+/* ---------- Raster ---------- */
+.layout {
+  max-width: 1840px; margin: 0 auto;
+  display: grid; gap: 20px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 1280px) {
+  .layout {
+    grid-template-columns: minmax(0, .88fr) minmax(0, 1.3fr) minmax(310px, .82fr);
+    grid-template-areas:
+      "kacheln  kacheln   kacheln"
+      "bereiche vergleich massn"
+      "bedarf   profile   massn";
+  }
+  /* Viele Bereiche (> 6, z. B. Klasse 4): Klassenvergleich und Förderprofile über zwei Spalten */
+  .layout.viele-bereiche {
+    grid-template-areas:
+      "kacheln   kacheln   kacheln"
+      "bereiche  bedarf    massn"
+      "vergleich vergleich massn"
+      "profile   profile   massn";
+  }
+  /* bei vielen Bereichen wird die linke Spalte lang: Maßnahmen-Kasten nur so hoch wie sein Inhalt */
+  .layout.viele-bereiche .massnahmen { align-self: start; }
+  /* Materialansicht (Stufe ohne Schuldaten): nur Bereiche und Maßnahmen */
+  .layout.nur-material {
+    grid-template-columns: minmax(0, 1.4fr) minmax(310px, .9fr);
+    grid-template-areas:
+      "kacheln  kacheln"
+      "bereiche massn";
+  }
+  .kacheln { grid-area: kacheln; }
+  .karte-bereiche { grid-area: bereiche; }
+  .karte-vergleich { grid-area: vergleich; }
+  .massnahmen { grid-area: massn; }
+  .karte-bedarf { grid-area: bedarf; }
+  .karte-profile { grid-area: profile; }
+}
+
+/* ---------- Kacheln ---------- */
+.kacheln { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.kachel {
+  background: var(--karte); border: 1px solid var(--linie); border-radius: var(--radius);
+  padding: 18px 22px; display: flex; align-items: center; gap: 22px; min-height: 112px;
+}
+.kachel-zahl { font-size: 52px; font-weight: 700; line-height: 1; letter-spacing: -.02em; white-space: nowrap; }
+.kachel-zahl small { font-size: 26px; font-weight: 700; margin-left: 3px; }
+.kachel-zahl.leer { font-size: 34px; color: var(--leise); }
+.kachel-titel { font-weight: 700; font-size: 17px; margin: 0; }
+.kachel-text { margin: 3px 0 0; color: var(--leise); font-size: 14.5px; }
+.kachel-haupt { background: #1f69c8; border-color: #1f69c8; color: #fff; }
+.kachel-haupt .kachel-text { color: #e3eefc; }
+.kachel-hinweis { min-height: 0; border-style: dashed; background: #f7f9fd; }
+
+/* ---------- Karten ---------- */
+.karte {
+  background: var(--karte); border: 1px solid var(--linie); border-radius: var(--radius);
+  padding: 22px 24px 18px; min-width: 0;
+}
+.karte h2, .massnahmen h2 { margin: 0; font-size: 20px; }
+.unterzeile { margin: 3px 0 16px; color: var(--leise); font-size: 14px; }
+.hinweis { margin: 8px 0 0; color: var(--leise); font-size: 12.5px; }
+.legende { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 16px 0 0; font-size: 13px; color: var(--leise); }
+.legende span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
+.sw-ok { background: var(--ok); } .sw-offen, .sw-o1 { background: var(--o1); }
+.sw-o2 { background: var(--o2); } .sw-o3 { background: var(--o3); }
+
+/* Wie sicher …: Balken */
+/* Fach-Gruppen: farbiger Rand + leichte Tönung je Fach */
+.fach-gruppe {
+  --fach: #5d7393;
+  border-left: 4px solid var(--fach); border-radius: 4px 10px 10px 4px;
+  background: #f7f9fd; background: color-mix(in srgb, var(--fach) 6%, #fff);
+  padding: 8px 12px 6px 14px; margin: 0 0 10px;
+}
+.fach {
+  margin: 0 0 4px; font-size: 12px; font-weight: 700; letter-spacing: .12em; color: var(--fach, var(--leise));
+  text-transform: uppercase; display: flex; align-items: center; gap: 8px;
+}
+.fach-gruppe .bereich-zeile:hover { background: rgba(255, 255, 255, .75); }
+
+/* Platzhalter (Fach noch ohne Bereiche) */
+.tag-platzhalter {
+  display: inline-block; font-size: 10.5px; font-weight: 600; letter-spacing: .02em; text-transform: none;
+  padding: 0 6px; border: 1px dashed currentColor; border-radius: 4px; line-height: 1.5; opacity: .85;
+}
+.fach-gruppe.ist-platzhalter { border-left-style: dashed; background: #f6f7fa; }
+.bereich-zeile.platzhalter { cursor: default; color: var(--leise); font-style: italic; }
+.bereich-zeile.platzhalter:hover { background: none; }
+.bereich-zeile.platzhalter:hover .bereich-name { text-decoration: none; }
+.seg-platzhalter, .platzhalter-zelle {
+  background: repeating-linear-gradient(45deg, #edf0f5 0 6px, #e1e6ee 6px 12px);
+}
+/* Vorschau: Fach angelegt, aber noch nicht erhoben – Materialien abrufbar */
+.seg-vorschau { color: var(--leise); font-weight: 600; font-size: 12.5px; }
+/* Text darf umbrechen, Balken darf schmaler werden – sonst ragt er bei schmaler Karte über den Rand */
+.bereich-zeile.vorschau { grid-template-columns: minmax(150px, 38%) minmax(0, 1fr); }
+.bereich-zeile.vorschau .balken { height: auto; min-height: 30px; min-width: 0; }
+.bereich-zeile.vorschau .seg-vorschau { white-space: normal; line-height: 1.2; padding: 4px 8px; min-width: 0; }
+.bereich-zeile.vorschau:hover .seg-vorschau { color: var(--text); text-decoration: underline; }
+.platz-vorschau .vorschau-text { margin: 4px 0 6px; font-size: 13.5px; color: #b8d3f5; }
+.vorschau-knoepfe { display: flex; flex-wrap: wrap; gap: 6px; }
+.vorschau-knoepfe .alle-knopf { margin-top: 0; font-style: normal; }
+.vorschlaege .mass-liste { margin: 6px 0 4px; }
+.vorschlaege .mass-liste li::before { background: var(--fach, var(--ok)); }
+.vorschlaege .chip { background: #e4eefb; border-color: #c3d6f1; color: #1d4f8f; }
+.vorschlaege .chip:hover { background: var(--ok); border-color: var(--ok); color: #fff; }
+.bereich-zeile {
+  display: grid; grid-template-columns: minmax(150px, 38%) 1fr; align-items: center; gap: 12px;
+  width: 100%; text-align: left; background: none; border: 0; padding: 6px 6px; margin: 0 -6px;
+  border-radius: 8px; width: calc(100% + 12px);
+}
+.bereich-zeile:hover { background: #f2f6fc; }
+.bereich-zeile:hover .bereich-name { text-decoration: underline; }
+.bereich-name { font-size: 15px; }
+.balken { display: flex; gap: 3px; height: 30px; }
+.seg {
+  display: flex; align-items: center; border-radius: 4px; font-weight: 700; font-size: 13.5px;
+  padding: 0 8px; min-width: 2.4em; white-space: nowrap; overflow: hidden; flex-basis: 0;
+}
+.seg-ok { background: var(--ok); color: #fff; }
+.seg-offen, .seg-o1 { background: var(--o1); color: var(--navy); justify-content: center; }
+.seg-o2 { background: var(--o2); color: #fff; justify-content: center; }
+.seg-o3 { background: var(--o3); color: #fff; justify-content: center; }
+.seg-zentriert { justify-content: center; }
+
+/* Klassenvergleich: Tabelle */
+.tab-wrap { overflow-x: auto; }
+table.vergleich { border-collapse: separate; border-spacing: 2px; width: 100%; font-size: 13.5px; }
+.vergleich th { font-weight: 600; font-size: 11.5px; color: var(--text); vertical-align: bottom; padding: 0 2px 2px; }
+.vergleich thead button {
+  background: none; border: 0; padding: 4px 1px; font-size: 11px; font-weight: 600; line-height: 1.2;
+  border-bottom: 2px dotted #9fb7d8; border-radius: 4px 4px 0 0; width: 100%;
+}
+.vergleich thead button:hover { background: #eef3fa; border-bottom-color: var(--ok); }
+.vergleich tbody th { text-align: left; white-space: nowrap; font-size: 14px; padding-right: 4px; }
+.karte-vergleich { padding-left: 18px; padding-right: 18px; }
+.vergleich tbody th button { background: none; border: 0; padding: 3px 5px; font-weight: 600; border-radius: 6px; text-align: left; line-height: 1.15; }
+.vergleich tbody th button:hover { background: #eef3fa; }
+.vergleich tr.fach-kopf th {
+  color: var(--fach); border-bottom: 3px solid var(--fach); font-size: 11px; font-weight: 700;
+  letter-spacing: .02em; text-align: center; padding: 0 2px 3px; line-height: 1.2;
+}
+.vergleich tr.fach-kopf th.platzhalter { border-bottom-style: dashed; }
+.vergleich thead th.platzhalter { color: var(--leise); font-weight: 500; font-style: italic; }
+.vergleich td.platzhalter-zelle { color: var(--leise); font-weight: 500; }
+.vergleich .n { display: block; color: var(--leise); font-weight: 400; font-size: 11.5px; }
+.vergleich td {
+  text-align: center; font-weight: 700; border-radius: 6px; padding: 8px 2px; min-width: 40px; white-space: nowrap;
+  border: 2px solid transparent;
+}
+.vergleich td.alle4 { border-left: 0; }
+.vergleich td.trenner { width: 6px; min-width: 6px; padding: 0; background: none; }
+.vergleich tr.gesamt th { padding-top: 6px; }
+.vergleich tr.aktiv td:not(.trenner) { border-color: var(--navy); box-shadow: 0 0 0 1px var(--navy); }
+.vergleich tr.aktiv th button { background: var(--navy); color: #fff; }
+.vergleich tr.aktiv th .n { color: #cfe0f5; }
+.skala { display: flex; align-items: center; gap: 10px; margin-top: 12px; font-size: 12.5px; color: var(--leise); }
+.skala i { display: block; width: 180px; height: 8px; border-radius: 4px; background: linear-gradient(90deg, rgb(205,224,248), rgb(18,60,135)); }
+
+/* Förderbedarf je Klasse */
+.bedarf-zeile { display: grid; grid-template-columns: 110px 1fr; align-items: center; gap: 12px; padding: 4px 6px; margin: 0 -6px; border-radius: 8px; }
+.bedarf-zeile.aktiv { background: #e3edfa; box-shadow: inset 3px 0 0 var(--navy); }
+.bedarf-zeile .klasse-knopf { background: none; border: 0; text-align: left; font-weight: 600; padding: 4px; border-radius: 6px; }
+.bedarf-zeile .klasse-knopf:hover { text-decoration: underline; }
+.bedarf-zeile.gesamt { margin-top: 10px; padding-top: 12px; border-top: 1px solid var(--linie); border-radius: 0 0 8px 8px; }
+.bedarf-zeile.gesamt.aktiv { border-radius: 8px; }
+.bedarf-zeile .balken { height: 28px; }
+
+/* Förderprofile */
+.profil-kopf, .profil-zeile {
+  display: grid; grid-template-columns: 44px repeat(var(--n, 4), 30px) minmax(0, 1fr) minmax(70px, 22%);
+  align-items: center; gap: 4px 6px;
+}
+.profil-kopf { font-size: 12px; color: var(--leise); padding: 0 6px 4px; }
+.profil-kopf span { text-align: center; }
+.profil-kopf span:first-child { text-align: left; }
+.profil-kopf .profil-kurz { color: var(--fach); font-weight: 700; }
+.profil-zeile {
+  width: 100%; text-align: left; background: none; border: 0; padding: 5px 6px; border-radius: 8px;
+}
+.profil-zeile:hover { background: #f2f6fc; }
+.profil-zeile:hover .profil-name { text-decoration: underline; }
+.profil-anzahl { font-weight: 700; font-size: 16px; text-align: center; }
+.dot {
+  width: 18px; height: 18px; border-radius: 50%; justify-self: center;
+  border: 2px solid #8fb5e6; background: #e4effc;
+}
+.dot.offen { background: var(--o2); border-color: var(--o2); }
+.dot-inline { display: inline-block; width: 11px; height: 11px; border-radius: 50%; border: 2px solid #8fb5e6; background: #e4effc; vertical-align: -1px; }
+.dot-inline.dot-offen { background: var(--o2); border-color: var(--o2); }
+.profil-name { font-size: 14px; padding-left: 8px; line-height: 1.25; }
+.profil-bar { height: 9px; border-radius: 5px; background: #e8eef7; overflow: hidden; }
+.profil-bar i { display: block; height: 100%; border-radius: 5px; }
+.leer-hinweis { color: var(--leise); font-size: 14px; margin: 8px 0; }
+
+/* ---------- Maßnahmen-Kasten ---------- */
+.massnahmen {
+  background: var(--navy); color: #fff; border-radius: var(--radius); padding: 22px 24px 20px; min-width: 0;
+}
+.massnahmen .unterzeile { color: #9ec3f2; }
+.platz { display: grid; grid-template-columns: 40px 1fr; gap: 14px; padding: 16px 0; border-top: 1px solid #2a4a74; }
+.platz:first-of-type { border-top: 0; padding-top: 6px; }
+.platz-nr {
+  width: 40px; height: 40px; border-radius: 9px; background: var(--ok); color: #fff;
+  display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 21px;
+}
+.platz-nr.erster { background: var(--offen); }
+.platz h3 { margin: 0; font-size: 17.5px; line-height: 1.25; }
+.platz-fach { margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+.platz-fach > span:first-child {
+  display: inline-block; background: var(--fach); color: #fff; font-size: 11px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; padding: 2px 9px; border-radius: 6px; line-height: 1.4;
+}
+.platz-wert.ohne-bedarf { display: block; color: #b8d3f5; }
+.platz-platzhalter h3, .platz-platzhalter .mass-liste li, .platz-platzhalter .platz-wert { color: #9db4d3; font-style: italic; }
+.platz-platzhalter h3 { font-style: italic; }
+.platz-platzhalter .platz-nr { background: #34507a; color: #b8cbe6; }
+.platz-platzhalter .platz-fach > span:first-child { opacity: .75; }
+.platz-platzhalter .platz-bar { background: repeating-linear-gradient(45deg, #2c4c78 0 5px, #36598a 5px 10px); }
+.platz-platzhalter .mass-liste li::before { background: #4f6f99; }
+.massnahmen .tag-platzhalter { color: #b8d3f5; }
+
+/* Beispieldaten (fiktive Werte eines Fachs, konfiguration.py „beispieldaten“) */
+.tag-beispiel { color: #b23c0c; border-style: solid; background: #fff1e8; opacity: 1; white-space: nowrap; }
+.fach { flex-wrap: wrap; row-gap: 2px; }
+.massnahmen .tag-beispiel { color: #ffd2b8; background: rgba(240, 138, 85, .18); }
+.meta-beispiel { display: block; color: #b23c0c; font-weight: 600; }
+.kachel-haupt .kachel-beispiel { color: #ffe0cc; font-size: 13px; margin-top: 4px; }
+.vergleich .fiktiv { font-weight: 600; text-transform: none; letter-spacing: 0; }
+.platz-wert { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; margin: 4px 0 8px; font-size: 14px; }
+.platz-wert strong { font-weight: 700; }
+.platz-bar { height: 6px; border-radius: 3px; background: #2c4c78; overflow: hidden; }
+.platz-bar i { display: block; height: 100%; background: var(--offen); border-radius: 3px; }
+.mass-liste { list-style: none; margin: 0; padding: 0; }
+.mass-liste li { position: relative; padding: 4px 0 4px 16px; font-size: 14.5px; line-height: 1.45; }
+.mass-liste li::before { content: ""; position: absolute; left: 2px; top: 12px; width: 6px; height: 6px; border-radius: 50%; background: #6aa6ef; }
+.chip {
+  display: inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 5px;
+  border: 1px solid #3f6aa1; background: #183c69; color: #dbe9fb; text-decoration: none; margin: 2px 0 0 4px;
+  white-space: nowrap; vertical-align: 1px;
+}
+.chip:hover { background: #2a78d6; border-color: #2a78d6; color: #fff; }
+.alle-knopf {
+  margin-top: 8px; background: transparent; color: #fff; border: 1.5px solid #6aa6ef; border-radius: 8px;
+  padding: 5px 12px; font-size: 13.5px; font-weight: 600;
+}
+.alle-knopf:hover { background: #2a78d6; border-color: #2a78d6; }
+.massnahmen .fussnote { margin: 12px 0 0; padding-top: 12px; border-top: 1px solid #2a4a74; font-size: 13px; color: #b8d3f5; }
+.massnahmen .fussnote button { background: none; border: 0; color: #fff; text-decoration: underline; padding: 0; font-size: inherit; }
+.massnahmen :focus-visible { outline-color: var(--fokus); }
+
+/* ---------- Fußzeile ---------- */
+.fuss { max-width: 1840px; margin: 22px auto 0; font-size: 13px; color: var(--leise); }
+.fuss p { margin: 2px 0; }
+
+/* ---------- Materialliste (Seitenleiste) ---------- */
+.overlay { position: fixed; inset: 0; background: rgba(13, 43, 82, .38); z-index: 40; }
+.panel {
+  position: fixed; top: 0; right: 0; bottom: 0; width: min(560px, 100%); background: #fff; z-index: 50;
+  display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(13, 43, 82, .25);
+}
+[hidden] { display: none !important; }
+.panel-kopf { display: flex; justify-content: space-between; gap: 16px; padding: 20px 24px 12px; border-bottom: 1px solid var(--linie); }
+.panel-eyebrow { margin: 0; font-size: 12px; font-weight: 700; color: var(--ok); letter-spacing: .12em; text-transform: uppercase; }
+.panel-kopf h2 { margin: 2px 0 2px; font-size: 20px; line-height: 1.25; }
+.panel-anzahl { margin: 0; color: var(--leise); font-size: 13.5px; }
+.schliessen {
+  flex: none; width: 40px; height: 40px; border-radius: 10px; border: 1.5px solid var(--linie); background: #fff;
+  font-size: 26px; line-height: 1;
+}
+.schliessen:hover { background: #eef3fa; }
+.panel-filter { padding: 12px 24px; display: grid; gap: 10px; border-bottom: 1px solid var(--linie); background: #f7f9fd; }
+.check { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+.check input { width: 18px; height: 18px; accent-color: var(--ok); }
+.leise { color: var(--leise); font-weight: 400; }
+.suche input {
+  width: 100%; padding: 8px 12px; border: 1.5px solid #b9cde8; border-radius: 8px; background: #fff; font-size: 14.5px;
+}
+.panel-inhalt { overflow-y: auto; padding: 8px 24px 28px; flex: 1; }
+.gruppe h3 {
+  position: sticky; top: -8px; background: #fff; margin: 0; padding: 14px 0 8px; font-size: 15px;
+  border-bottom: 2px solid var(--text); display: flex; justify-content: space-between; z-index: 1;
+}
+.gruppe h3 span { color: var(--leise); font-weight: 500; }
+.eintrag { padding: 12px 0; border-bottom: 1px solid var(--linie); }
+.eintrag.mehrfach { background: #fff6f0; margin: 0 -10px; padding: 12px 10px; border-radius: 8px; border-bottom-color: transparent; margin-top: 6px; }
+.eintrag-kopf { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 8px; }
+.eintrag h4 { margin: 0; font-size: 15px; }
+.etikett { font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 5px; background: #e4eefb; color: #1d4f8f; white-space: nowrap; }
+.etikett.anschaffung { background: #fdeee4; color: #8a3a10; }
+.etikett.mehr { background: var(--o2); color: #fff; }
+.eintrag p { margin: 4px 0 6px; font-size: 14px; }
+.bereich-chips { display: flex; flex-wrap: wrap; gap: 4px; margin: 4px 0 6px; }
+.bchip { font-size: 11.5px; padding: 1px 7px; border-radius: 999px; border: 1px solid #b9cde8; background: #fff; color: var(--text); }
+button.bchip:hover { border-color: var(--ok); background: #eef3fa; }
+.bchip.zusatz { border-style: dashed; color: var(--leise); }
+.bchip.treffer { background: #fbe1d2; border-color: #f0a47a; }
+.links { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13.5px; }
+.links a { color: #1f5fb4; font-weight: 600; text-underline-offset: 2px; }
+.links a:hover { color: var(--navy); }
+.panel-leer { color: var(--leise); padding: 20px 0; }
+
+/* ---------- unter 1280 px: einspaltig ---------- */
+@media (max-width: 1279.98px) {
+  body { padding: 20px 16px; }
+  .kopf { flex-direction: column; align-items: flex-start; }
+  .kopf-meta { text-align: left; white-space: normal; }
+}
+@media (max-width: 560px) {
+  .kachel { gap: 14px; }
+  .kachel-zahl { font-size: 40px; }
+  .bereich-zeile { grid-template-columns: 1fr; gap: 4px; }
+  .bedarf-zeile { grid-template-columns: 76px 1fr; }
+  .profil-kopf, .profil-zeile { grid-template-columns: 34px repeat(var(--n, 4), 22px) minmax(0, 1fr); }
+  .profil-kopf span:last-child, .profil-bar { display: none; }
+  .dot { width: 15px; height: 15px; }
+}
+
+/* ---------- Knopf „Förderempfehlungen als PDF“ (Maßnahmen-Kasten) ---------- */
+.pdf-knopf {
+  display: inline-flex; align-items: center; gap: 8px; margin: -4px 0 10px;
+  background: #fff; color: var(--navy); border: 0; border-radius: 8px; padding: 7px 14px;
+  font-weight: 700; font-size: 14px; text-align: left;
+}
+.pdf-knopf:hover { background: #e3eefc; }
+.pdf-knopf svg { flex: none; }
+
+/* ---------- Druckansicht „Förderempfehlungen“ ---------- */
+.druck { display: none; page: empfehlung; }
+@page { size: A4; margin: 14mm 15mm 14mm; }
+/* Druckansicht ohne Seitenrand: dann druckt der Browser keine Kopf-/Fußzeile (Adresse, Datum, Seitenzahl).
+   Den Abstand zum Papierrand erzeugt .d-rahmen (oben/unten auf jeder Seite) und .d-seite (links/rechts). */
+@page empfehlung { size: A4; margin: 0; }
+.d-rahmen { width: 100%; border-collapse: collapse; }
+.d-rahmen td { padding: 0; vertical-align: top; }
+.d-rahmen td.d-rand { height: 13mm; }
+.d-rahmen td.d-seite { padding: 0 15mm; }
+
+@media print {
+  body { background: #fff; padding: 0; }
+  .auswahl, .hinweis, .panel, .overlay, .skip, .pdf-knopf { display: none !important; }
+  /* Beim Knopf „als PDF“: nur die Empfehlungen drucken */
+  body.druckmodus > *:not(.druck) { display: none !important; }
+  body.druckmodus .druck { display: block; }
+}
+
+.druck {
+  font-size: 10pt; line-height: 1.35; color: #0d2b52;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.druck a { color: inherit; text-decoration: none; }
+.d-kopf { border-bottom: 2pt solid #0d2b52; padding-bottom: 6pt; margin-bottom: 9pt; }
+.d-eyebrow { margin: 0; font-size: 8.5pt; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #2a78d6; }
+.d-kopf h1 { margin: 2pt 0 2pt; font-size: 21pt; line-height: 1.15; }
+.d-meta { margin: 0; color: #5d7393; font-size: 9pt; }
+.d-hinweis-beispiel {
+  margin: 0 0 9pt; padding: 4pt 8pt; border: 1pt solid #b23c0c; border-radius: 4pt;
+  background: #fff1e8; color: #b23c0c; font-weight: 700; font-size: 9pt;
+}
+.d-zahlen { display: flex; gap: 6pt; margin: 0 0 8pt; }
+.d-zahlen div { flex: 1; border: 1pt solid #dbe5f2; border-radius: 5pt; padding: 4pt 8pt; }
+.d-zahlen strong { display: block; font-size: 15pt; line-height: 1.2; }
+.d-zahlen span { display: block; font-size: 8pt; color: #5d7393; }
+.d-intro { margin: 0 0 10pt; font-size: 8.5pt; color: #5d7393; }
+
+.d-platz { --fach: #5d7393; border-left: 4pt solid var(--fach); padding: 2pt 0 4pt 11pt; margin: 0 0 12pt; }
+.d-platz-leer { border-left-style: dashed; }
+.d-platz-kopf { display: flex; align-items: center; gap: 6pt; break-after: avoid; page-break-after: avoid; }
+.d-nr {
+  display: inline-flex; align-items: center; justify-content: center; width: 15pt; height: 15pt;
+  border-radius: 4pt; background: var(--fach); color: #fff; font-weight: 700; font-size: 9.5pt;
+}
+.d-fach { font-size: 8.5pt; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--fach); }
+.d-tag-beispiel {
+  font-size: 7.5pt; font-weight: 700; color: #b23c0c; border: 1pt solid #b23c0c; border-radius: 3pt;
+  padding: 0 4pt; background: #fff1e8;
+}
+.d-platz h2 { margin: 3pt 0 2pt; font-size: 14pt; line-height: 1.2; break-after: avoid; page-break-after: avoid; }
+.d-wert { margin: 0 0 6pt; font-size: 9.5pt; display: flex; align-items: center; gap: 8pt; break-after: avoid; }
+.d-bar { display: inline-block; width: 80pt; height: 5pt; background: #e8eef7; border-radius: 3pt; overflow: hidden; }
+.d-bar i { display: block; height: 100%; background: #f08a55; }
+.d-mass { margin: 0; padding-left: 14pt; }
+.d-mass > li { margin: 0 0 6pt; break-inside: avoid; page-break-inside: avoid; }
+.d-mass > li::marker { font-weight: 700; color: var(--fach); }
+.d-mass-text { margin: 0 0 2pt; font-weight: 700; font-size: 10pt; }
+.d-mat { list-style: none; margin: 0; padding: 0; }
+.d-mat li { margin: 0 0 3pt; padding-left: 7pt; border-left: 1.5pt solid #dbe5f2; font-size: 8.8pt; }
+.d-mat-name { font-weight: 600; }
+.d-mat-typ { color: #5d7393; font-size: 7.8pt; }
+.d-mat-text { display: block; }
+.d-mat-fund { display: block; color: #5d7393; font-size: 7.8pt; }
+.d-weitere, .d-leise { margin: 4pt 0 0; font-size: 8.5pt; color: #5d7393; }
+.d-fuss { margin-top: 10pt; padding-top: 5pt; border-top: 1pt solid #dbe5f2; font-size: 7.5pt; color: #5d7393; }
+.d-fuss p { margin: 0 0 2pt; }
